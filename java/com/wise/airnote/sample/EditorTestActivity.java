@@ -8,22 +8,10 @@
 
 package com.wise.airnote.sample;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Browser;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -41,6 +29,7 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor_test);
+        super.setTitle("AirNote Editor integration sample");
 
         mWebView = (WebView)findViewById(R.id.webview);
         
@@ -55,27 +44,15 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.create_editor) {
-            Intent intent = new Intent(Intent.ACTION_EDIT);
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-            intent.setType("text/html");
-            intent.putExtra("edit_content", "");
+        	Intent intent = AirNoteBridge.createEditIndent("");
             startActivityForResult(intent, REQ_EDIT_HTML);
         } 
         else if (id == R.id.load_file) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-            intent.setType("text/html");
-            startActivityForResult(Intent.createChooser(intent, "Choose File"), REQ_PICK_FILE);
+        	Intent intent = AirNoteBridge.createPickFileIntent("Choose HTML File");
+            startActivityForResult(intent, REQ_PICK_FILE);
         }
         else if (id == R.id.edit_content) {
-            Intent intent = new Intent(Intent.ACTION_EDIT);
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-            intent.setType("text/html");
-            intent.putExtra("edit_content", this.htmlContent);
-
+        	Intent intent = AirNoteBridge.createEditIndent(this.htmlContent);
             startActivityForResult(intent, REQ_EDIT_HTML);
         }
     }
@@ -83,43 +60,19 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	Log.d("airnote", "res : " + (resultCode == RESULT_OK) + " req: " + requestCode);
-        if (resultCode == RESULT_OK) {
+    	String html = null;
+        if (resultCode == RESULT_OK && data != null) {
             if (requestCode == REQ_PICK_FILE) {
-                if (data != null && data.getData() != null) {
-                    final Uri fileUri = data.getData();
-                    
-                    ContentResolver cr = this.getContentResolver();
-                    InputStream is = null;
-                    try {
-                        is = cr.openInputStream(fileUri);
-                        ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
-                        IOUtils.copy(is, out);
-                        out.flush();
-                        out.close();
-
-                        this.htmlContent = out.toString();
-    	            	this.mWebView.loadData(htmlContent, "text/html; charset=utf-8", "utf-8");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (is != null) {
-                            try {
-                                is.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                } 	
+            	html = IOUtils.readContent(data.getData(), this.getContentResolver());
             }
             else if (requestCode == REQ_EDIT_HTML) {
-            	Bundle ex = data.getExtras();
-            	if (ex != null) {
-            		this.htmlContent = ex.getString("edit_result");
-	            	Log.d("airnote", "edit result: " + htmlContent);
-	            	this.mWebView.loadData(htmlContent, "text/html; charset=utf-8", "utf-8");
-            	}
+            	html = AirNoteBridge.getEditResult(data);
             }
+            
+        	if (html != null) {
+        		this.htmlContent = html;
+        		this.mWebView.loadData(html, "text/html; charset=utf-8", "utf-8");
+        	}
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -158,7 +111,7 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
             }
         });
         
-        if (!this.isAirNoteInstalled()) {
+        if (!AirNoteBridge.isAirNoteInstalled(this)) {
             this.htmlContent = "<htm><body><br><br><H1 style='text-align:center'>Result View</H1></body></html>";
             this.findViewById(R.id.toolbar).setVisibility(View.VISIBLE);
         }
@@ -170,16 +123,4 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
         
     }
 
-    private boolean isAirNoteInstalled() {
-        PackageManager pm = getPackageManager();
-        boolean app_installed;
-        try {
-            pm.getPackageInfo("com.wise.airnote.demo", PackageManager.GET_ACTIVITIES);
-            app_installed = true;
-        }
-        catch (PackageManager.NameNotFoundException e) {
-            app_installed = false;
-        }
-        return app_installed;
-    }        
 }

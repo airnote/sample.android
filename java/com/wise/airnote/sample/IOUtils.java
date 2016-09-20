@@ -1,8 +1,13 @@
 package com.wise.airnote.sample;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.net.Uri;
 
 public class IOUtils {
 
@@ -27,5 +32,33 @@ public class IOUtils {
         }
         return count;
     }
+
+	public static String readContent(Uri fileUri, ContentResolver cr) {
+        if (fileUri == null) {
+        	return null;
+        }
+            
+        InputStream is = null;
+        try {
+            is = cr.openInputStream(fileUri);
+            ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+            IOUtils.copy(is, out);
+            out.flush();
+            out.close();
+            String s = out.toString();
+            return s;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+	}
 
 }
