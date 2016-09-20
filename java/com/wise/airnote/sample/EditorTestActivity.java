@@ -6,12 +6,12 @@
  *
  */
 
-package com.wise.airnote.test;
+package com.wise.airnote.sample;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,6 +19,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import android.webkit.WebViewClient;
 public class EditorTestActivity extends Activity implements View.OnClickListener {
     private static final int REQ_PICK_FILE = 1001;
     private static final int REQ_EDIT_HTML = 1002;
+	
     private WebView mWebView;
 	private String htmlContent;
 
@@ -53,26 +55,22 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.create_editor) {
-            Intent intent = new Intent(Intent.ACTION_INSERT);
+            Intent intent = new Intent(Intent.ACTION_EDIT);
             intent.addCategory(Intent.CATEGORY_DEFAULT);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             intent.setType("text/html");
             intent.putExtra("edit_content", "");
             startActivityForResult(intent, REQ_EDIT_HTML);
-        	
-            //Intent intent = new Intent(this, SignatureActivity.class);
-            //this.startActivity(intent);
         } 
         else if (id == R.id.load_file) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             intent.setType("text/html");
-            startActivityForResult(Intent.createChooser(intent, "Choose File"),
-                    REQ_PICK_FILE);
+            startActivityForResult(Intent.createChooser(intent, "Choose File"), REQ_PICK_FILE);
         }
         else if (id == R.id.edit_content) {
-            Intent intent = new Intent(Intent.ACTION_INSERT);
+            Intent intent = new Intent(Intent.ACTION_EDIT);
             intent.addCategory(Intent.CATEGORY_DEFAULT);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             intent.setType("text/html");
@@ -130,13 +128,11 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
 	private void initWebView(WebView view) {
         WebSettings settings = view.getSettings();
 
-        settings.setSavePassword(false);    //  Deprecated in API level 18.
         settings.setSaveFormData(false);
 
         //  Show always all images in HTML
         settings.setLoadsImagesAutomatically(true);
 
-        //settings.setUseWideViewPort(true);
         settings.setSupportZoom(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
@@ -144,13 +140,6 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
         settings.setLoadWithOverviewMode(true);
         //settings.setUseWideViewPort(true);		
 
-        //  Debugging Android WebViews
-        //  https://developers.google.com/chrome-developer-tools/docs/remote-debugging#debugging-webviews
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE)) {
-                WebView.setWebContentsDebuggingEnabled(true);
-            }
-        }
 
         view.setWebViewClient(new WebViewClient() {
             @Override
@@ -165,30 +154,32 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                final Intent intent;
-                final Uri uri = Uri.parse(url);
-                Activity activity = EditorTestActivity.this;
-                intent = new Intent(Intent.ACTION_VIEW, uri);
-
-                // If this is a mailto: uri, we want to set the account name in the intent so
-                // the ComposeActivity can default to the current account
-                intent.putExtra(Browser.EXTRA_APPLICATION_ID, activity.getPackageName());
-
-                try {
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
-                            | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    activity.startActivity(intent);
-                } catch (ActivityNotFoundException ex) {
-                    // If no application can handle the URL, assume that the
-                    // caller can handle it.
-                }
-
-                return true;
+            	return super.shouldOverrideUrlLoading(view, url);
             }
         });
         
-        this.htmlContent = "<htm><body><br><br><H1 style='text-align:center'>Result View</H1></body></html>";
+        if (!this.isAirNoteInstalled()) {
+            this.htmlContent = "<htm><body><br><br><H1 style='text-align:center'>Result View</H1></body></html>";
+            this.findViewById(R.id.toolbar).setVisibility(View.VISIBLE);
+        }
+        else {
+            this.htmlContent = "<htm><body><br><br><H3 style='text-align:center'>AirNote must be installed<br>to test this sample application.<br><br>"
+            		+ "<A href='https://play.google.com/store/apps/details?id=com.wise.airnote.demo'>Go to the download page.</a></H3></body></html>";
+        }
     	this.mWebView.loadData(htmlContent, "text/html; charset=utf-8", "utf-8");
         
     }
+
+    private boolean isAirNoteInstalled() {
+        PackageManager pm = getPackageManager();
+        boolean app_installed;
+        try {
+            pm.getPackageInfo("com.wise.airnote.demo", PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
+    }        
 }

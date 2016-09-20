@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:versionCode="1"
-    package="com.wise.airnote.test" >
+    package="com.wise.airnote.sample" >
 
     <uses-sdk android:minSdkVersion="8" />
     
@@ -20,8 +20,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
         
-        <activity android:name="com.wise.airnote.test.EditorTestActivity"
-            android:label="@string/app_name"
+        <activity android:name="com.wise.airnote.sample.EditorTestActivity"
+            android:label="@string/app_title"
             android:theme="@android:style/Theme.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

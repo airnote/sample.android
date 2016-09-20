@@ -1,4 +1,4 @@
-package com.wise.airnote.test;
+package com.wise.airnote.sample;
 
 import java.io.IOException;
 import java.io.InputStream;

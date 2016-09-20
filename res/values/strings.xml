@@ -1,3 +1,4 @@
 <resources  xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">AirNote demo</string>
+    <string name="app_title">AirNote Editor integration sample</string>
 </resources>
