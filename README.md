@@ -7,7 +7,7 @@ It shows how to make editor via interacting with AirNote Editor app.
 AirNote is a HTML Editor component for Android and iOS.<br>
 AirNote provides WYSIWYG HTML editing functions as much as the PC version of Gmail.<br>
 AirNote provides full HTML 4.1 + CSS 2.1 rendering ability that more powerful than Microsoft Word.<br>
-[AirNote home](http://airnote.github.io)
+For more information click [here](http://airnote.github.io)
 
 ## What this sample for? 
 - To add full HTML Editing features into your application with free. 
