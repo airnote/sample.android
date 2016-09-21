@@ -1,21 +1,14 @@
 ##AirNote Bridge.
 
-AirNote bridge is a sample app that provides WYGIWYG HTML editor.<br>
-It shows how to easily add editing functionality into your android app with interaction with external app, AirNote HTML editor.
+AirNote bridge is a application sample that provides full-featured HTML editor.<br>
+It shows how to easily interact with external HTML editor.<br>
+This sample is using AirNote for external HTML editor.
 
-## What is AirNote Editor
+## What is AirNote
 AirNote is a HTML Editor component for Android and iOS.<br>
 AirNote provides WYSIWYG HTML editing functions as much as the PC version of Gmail.<br>
-AirNote provides full HTML 4.1 + CSS 2.1 rendering ability that more powerful than Microsoft Word.<br>
-For more information click [here](http://airnote.github.io)
-
-## What this sample for? 
-- To add full HTML Editing features into your application with free.
-- To test AirNote Editor before purchase its commercial version.
-
-## What's still under development?
-AirNote for iOS version is not avaliable yet.
-It will be released late 4Q of 2016.
+AirNote provides HTML+CSS renderer more powerful than Microsoft Word.<br>
+For more information about AirNote click [here](http://airnote.github.io)
 
 ## Questions
 If you have any questions, we're listening and will do our best to help.<br>
