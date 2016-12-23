@@ -71,6 +71,7 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
             
         	if (html != null) {
         		this.htmlContent = html;
+        		mWebView.loadUrl("about:blank");
         		this.mWebView.loadData(html, "text/html; charset=utf-8", "utf-8");
         	}
         }
@@ -111,7 +112,7 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
             }
         });
         
-        if (!AirNoteBridge.isAirNoteInstalled(this)) {
+        if (AirNoteBridge.isAirNoteInstalled(this)) {
             this.htmlContent = "<htm><body><br><br><H1 style='text-align:center'>Result View</H1></body></html>";
             this.findViewById(R.id.toolbar).setVisibility(View.VISIBLE);
         }

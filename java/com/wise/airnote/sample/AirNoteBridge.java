@@ -7,18 +7,18 @@ import android.os.Bundle;
 
 public class AirNoteBridge {
 
-	public static Intent createEditIndent(String string) {
+	public static Intent createEditIndent(String content) {
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         intent.setType("text/html");
-        intent.putExtra("edit_content", "");
+        intent.putExtra(Intent.EXTRA_HTML_TEXT, content);
         return intent;
 	}
 
 	public static String getEditResult(Intent data) {
     	Bundle ex = data.getExtras();
-    	String htmlContent = (ex == null) ? null : ex.getString("edit_result");
+    	String htmlContent = (ex == null) ? null : ex.getString(Intent.EXTRA_HTML_TEXT);
     	//Log.d("airnote", "edit result: " + html);
     	return htmlContent;
 	}
