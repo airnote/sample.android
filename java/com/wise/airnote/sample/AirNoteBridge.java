@@ -3,11 +3,12 @@ package com.wise.airnote.sample;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 public class AirNoteBridge {
 
-	public static Intent createEditIndent(String content) {
+	public static Intent createEditIntent(String content) {
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
@@ -42,5 +43,15 @@ public class AirNoteBridge {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         intent.setType("text/html");
         return Intent.createChooser(intent, title);        
+	}
+
+	public static Intent createDownloadIndent(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        //intent.addCategory(Intent.CATEGORY_DEFAULT);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        //intent.setType("text/html");
+        //intent.putExtra(Intent.EXTRA_HTML_TEXT, content);
+        intent.setData(Uri.parse(url));
+        return intent;
 	}
 }

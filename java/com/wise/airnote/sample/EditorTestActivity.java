@@ -24,6 +24,7 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
 	
     private WebView mWebView;
 	private String htmlContent;
+	private String downloadUrl = "https://play.google.com/store/apps/details?id=com.wise.airnote.demo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +37,26 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
         findViewById(R.id.create_editor).setOnClickListener(this);
         findViewById(R.id.load_file).setOnClickListener(this);
         findViewById(R.id.edit_content).setOnClickListener(this);
+        findViewById(R.id.download).setOnClickListener(this);
 
         initWebView(mWebView);
+        initUI();
     }
 
+    
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	if (this.downloadUrl != null) {
+    		this.initUI();
+    	}
+    }
+    
     @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.create_editor) {
-        	Intent intent = AirNoteBridge.createEditIndent("");
+        	Intent intent = AirNoteBridge.createEditIntent("");
             startActivityForResult(intent, REQ_EDIT_HTML);
         } 
         else if (id == R.id.load_file) {
@@ -52,7 +64,11 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
             startActivityForResult(intent, REQ_PICK_FILE);
         }
         else if (id == R.id.edit_content) {
-        	Intent intent = AirNoteBridge.createEditIndent(this.htmlContent);
+        	Intent intent = AirNoteBridge.createEditIntent(this.htmlContent);
+            startActivityForResult(intent, REQ_EDIT_HTML);
+        }
+        else if (id == R.id.download) {
+        	Intent intent = AirNoteBridge.createDownloadIndent(this.downloadUrl );
             startActivityForResult(intent, REQ_EDIT_HTML);
         }
     }
@@ -94,7 +110,6 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
         settings.setLoadWithOverviewMode(true);
         //settings.setUseWideViewPort(true);		
 
-
         view.setWebViewClient(new WebViewClient() {
             @Override
             public void onScaleChanged(WebView view, float oldScale, float newScale) {
@@ -111,17 +126,20 @@ public class EditorTestActivity extends Activity implements View.OnClickListener
             	return super.shouldOverrideUrlLoading(view, url);
             }
         });
-        
+    }
+    
+    private void initUI() { 
         if (AirNoteBridge.isAirNoteInstalled(this)) {
-            this.htmlContent = "<htm><body><br><br><H1 style='text-align:center'>Result View</H1></body></html>";
             this.findViewById(R.id.toolbar).setVisibility(View.VISIBLE);
+            this.findViewById(R.id.webview).setVisibility(View.VISIBLE);
+        	this.findViewById(R.id.download_pane).setVisibility(View.GONE);
+            this.htmlContent = "<htm><body><br><br><H1 style='text-align:center'>Result View</H1></body></html>";
+        	this.mWebView.loadData(htmlContent, "text/html; charset=utf-8", "utf-8");
+        	this.downloadUrl = null;
         }
         else {
-            this.htmlContent = "<htm><body><br><br><H3 style='text-align:center'>AirNote must be installed<br>to test this sample application.<br><br>"
-            		+ "<A href='https://play.google.com/store/apps/details?id=com.wise.airnote.demo'>Go to the download page.</a></H3></body></html>";
+        	this.findViewById(R.id.download_pane).setVisibility(View.VISIBLE);
         }
-    	this.mWebView.loadData(htmlContent, "text/html; charset=utf-8", "utf-8");
-        
     }
 
 }

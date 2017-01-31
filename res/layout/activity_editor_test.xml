@@ -10,6 +10,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:id="@+id/download_pane"
+        android:orientation="vertical" >
+    
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AirNote is must be installed"
+            android:textSize="12pt"
+            android:layout_gravity="center"
+         />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="to test this sample application"
+            android:textSize="12pt"
+            android:layout_gravity="center"
+         />
+        
+        <Button
+            android:layout_marginTop="12pt"
+            android:id="@+id/download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="12pt"
+            android:text=" Download Airnote" />
+    </LinearLayout>
+        
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         android:id="@+id/toolbar"
         android:orientation="horizontal" >
 
@@ -39,6 +71,7 @@
 
     <WebView
         android:id="@+id/webview"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp" />
